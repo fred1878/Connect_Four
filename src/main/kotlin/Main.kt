@@ -74,7 +74,7 @@ fun checkColumnWin(board: List<List<Char>>, currentChar:Char):Boolean {
 }
 
 fun checkRowWin(board: List<List<Char>>, currentChar:Char,col:Int):Boolean {
-    for (c in 0 until col  - WIN_LENGTH){
+    for (c in 0 .. col  - WIN_LENGTH){
         val column = board[c]
         for (r in 0 until column.size-1){
             val line = listOf(
@@ -92,7 +92,7 @@ fun checkRowWin(board: List<List<Char>>, currentChar:Char,col:Int):Boolean {
 }
 
 fun checkNEDiagonalWin(board: List<List<Char>>, currentChar:Char):Boolean {
-    for (c in 0 until board.size - WIN_LENGTH){
+    for (c in 0 .. board.size - WIN_LENGTH){
         val column = board[c]
         for (r in 0 until column.size - WIN_LENGTH){
             val line = listOf(
