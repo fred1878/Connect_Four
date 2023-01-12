@@ -10,14 +10,22 @@ fun main() {
 
     val (row, col) = getValidDimensions()
 
+    println("Do you want to play single or multiple games?")
+    println("For a single game, input 1 or press Enter")
+    println("Input a number of games:")
+    val numberOfGames = getNumberOfGames()
     println("$firstName VS $secondName")
     println("$row X $col board")
-    val board = List(col) { MutableList(row) {' '} }
 
+    gameLoop(row,col,firstName,secondName,numberOfGames)
+}
+
+fun gameLoop( row:Int, col:Int, firstName:String, secondName: String, numberOfGames:Int) {
+    val board = List(col) { MutableList(row) {' '} }
+    var activePlayer = Pair(firstName, 'o')
     printBoard(row, col, board)
 
-    var activePlayer = Pair(firstName, 'o')
-
+    val playedGames = 0
     while (true) {
         println("${activePlayer.first}'s turn:")
 
@@ -52,6 +60,7 @@ fun main() {
             if (checkColumnWin(board,activePlayer.second) || checkRowWin(board,activePlayer.second,col) || checkNEDiagonalWin(board,activePlayer.second) || checkNWDiagonalWin(board,activePlayer.second)){
                 println("Player ${activePlayer.first} won")
                 println("Game Over!")
+                break
             }
 
             activePlayer = toggleActivePlayer(activePlayer.first, firstName, secondName)
@@ -123,6 +132,24 @@ fun checkNWDiagonalWin(board: List<List<Char>>, currentChar:Char):Boolean {
 
 fun getCell(board: List<List<Char>>, col: Int, row: Int): Char {
     return board[col][row]
+}
+
+fun getNumberOfGames():Int {
+    val num = readln().trim()
+    if ( num == "" ) {
+        return 1
+    }
+    if (isNumber(num)) {
+        val n = num.toInt()
+        return if ( n > 0) {
+            n
+        } else {
+            println("Invalid Input")
+            getNumberOfGames()
+        }
+    }
+    println("Invalid Input")
+    return getNumberOfGames()
 }
 
 
