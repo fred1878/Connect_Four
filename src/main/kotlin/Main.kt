@@ -10,23 +10,28 @@ fun main() {
 
     val (row, col) = getValidDimensions()
 
-    println("Do you want to play single or multiple games?")
-    println("For a single game, input 1 or press Enter")
-    println("Input a number of games:")
     val numberOfGames = getNumberOfGames()
     println("$firstName VS $secondName")
     println("$row X $col board")
+    if (numberOfGames == 1){
+        println("Single game")
+    } else {
+        println("Total $numberOfGames games")
+        println("Game #1")
+    }
 
     gameLoop(row,col,firstName,secondName,numberOfGames)
 }
 
 fun gameLoop( row:Int, col:Int, firstName:String, secondName: String, numberOfGames:Int) {
-    val board = List(col) { MutableList(row) {' '} }
+    var board = List(col) { MutableList(row) {' '} }
     var activePlayer = Pair(firstName, 'o')
     printBoard(row, col, board)
 
-    val playedGames = 0
-    while (true) {
+    var playedGames = 0
+    var firstNameScore = 0
+    var secondNameScore = 0
+    wincheck@ while (true) {
         println("${activePlayer.first}'s turn:")
 
         val move = readln()
@@ -53,14 +58,53 @@ fun gameLoop( row:Int, col:Int, firstName:String, secondName: String, numberOfGa
 
             if (board.all { char -> char.all{ c -> c != ' '} }){
                 println("It is a draw")
-                println("Game Over!")
-                break
+                if ( numberOfGames > 1) {
+                    firstNameScore++
+                    secondNameScore++
+                    playedGames++
+                    println("Score")
+                    println("$firstName: $firstNameScore $secondName: $secondNameScore")
+                    if (playedGames >= numberOfGames) {
+                        println("Game Over!")
+                        break
+                    } else {
+                        board = List(col) { MutableList(row) {' '} }
+                        println("Game #${playedGames + 1}")
+                        printBoard(row, col, board)
+                        activePlayer = toggleActivePlayer(activePlayer.first, firstName, secondName)
+                        continue@wincheck
+                    }
+                } else {
+                    println("Game Over!")
+                    break
+                }
             }
 
             if (checkColumnWin(board,activePlayer.second) || checkRowWin(board,activePlayer.second,col) || checkNEDiagonalWin(board,activePlayer.second) || checkNWDiagonalWin(board,activePlayer.second)){
                 println("Player ${activePlayer.first} won")
-                println("Game Over!")
-                break
+                if ( numberOfGames > 1) {
+                    if ( activePlayer.first == firstName) {
+                        firstNameScore += 2
+                    } else {
+                        secondNameScore += 2
+                    }
+                    playedGames++
+                    println("Score")
+                    println("$firstName: $firstNameScore $secondName: $secondNameScore")
+                    if (playedGames >= numberOfGames) {
+                        println("Game Over!")
+                        break
+                    } else {
+                        board = List(col) { MutableList(row) {' '} }
+                        println("Game #${playedGames + 1}")
+                        printBoard(row, col, board)
+                        activePlayer = toggleActivePlayer(activePlayer.first, firstName, secondName)
+                        continue@wincheck
+                    }
+                } else {
+                    println("Game Over!")
+                    break
+                }
             }
 
             activePlayer = toggleActivePlayer(activePlayer.first, firstName, secondName)
@@ -135,6 +179,9 @@ fun getCell(board: List<List<Char>>, col: Int, row: Int): Char {
 }
 
 fun getNumberOfGames():Int {
+    println("Do you want to play single or multiple games?")
+    println("For a single game, input 1 or press Enter")
+    println("Input a number of games:")
     val num = readln().trim()
     if ( num == "" ) {
         return 1
@@ -144,11 +191,11 @@ fun getNumberOfGames():Int {
         return if ( n > 0) {
             n
         } else {
-            println("Invalid Input")
+            println("Invalid input")
             getNumberOfGames()
         }
     }
-    println("Invalid Input")
+    println("Invalid input")
     return getNumberOfGames()
 }
 
