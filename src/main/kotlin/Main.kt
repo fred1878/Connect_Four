@@ -31,7 +31,7 @@ fun gameLoop( row:Int, col:Int, firstName:String, secondName: String, numberOfGa
     var playedGames = 0
     var firstNameScore = 0
     var secondNameScore = 0
-    wincheck@ while (true) {
+    winCheck@ while (true) {
         println("${activePlayer.first}'s turn:")
 
         val move = readln()
@@ -72,7 +72,7 @@ fun gameLoop( row:Int, col:Int, firstName:String, secondName: String, numberOfGa
                         println("Game #${playedGames + 1}")
                         printBoard(row, col, board)
                         activePlayer = toggleActivePlayer(activePlayer.first, firstName, secondName)
-                        continue@wincheck
+                        continue@winCheck
                     }
                 } else {
                     println("Game Over!")
@@ -99,7 +99,7 @@ fun gameLoop( row:Int, col:Int, firstName:String, secondName: String, numberOfGa
                         println("Game #${playedGames + 1}")
                         printBoard(row, col, board)
                         activePlayer = toggleActivePlayer(activePlayer.first, firstName, secondName)
-                        continue@wincheck
+                        continue@winCheck
                     }
                 } else {
                     println("Game Over!")
@@ -117,7 +117,10 @@ fun checkColumnWin(board: List<List<Char>>, currentChar:Char):Boolean {
     for (c in board.indices){
         val column = board[c]
         for (r in 0..column.size - WIN_LENGTH){
-            val line = listOf(getCell(board,c,r),getCell(board,c,r + 1),getCell(board,c,r + 2),getCell(board,c,r + 3))
+            val line = listOf(getCell(board,c,r)
+                ,getCell(board,c,r + 1)
+                ,getCell(board,c,r + 2)
+                ,getCell(board,c,r + 3))
             if (line.all { it == currentChar }){
                 return true
             }
@@ -165,7 +168,11 @@ fun checkNWDiagonalWin(board: List<List<Char>>, currentChar:Char):Boolean {
     for (c in WIN_LENGTH - 1 until board.size){
         val column = board[c]
         for (r in 0..column.size - WIN_LENGTH){
-            val line = listOf(getCell(board,c,r),getCell(board,c - 1,r + 1),getCell(board,c - 2,r + 2),getCell(board,c - 3,r + 3))
+            val line = listOf(
+                getCell(board,c,r)
+                ,getCell(board,c - 1,r + 1)
+                ,getCell(board,c - 2,r + 2)
+                ,getCell(board,c - 3,r + 3))
             if (line.all { it == currentChar }){
                 return true
             }
@@ -206,8 +213,8 @@ fun getValidDimensions(): Pair<Int, Int> {
 
     val regex = """\s*(\d)+\s*[xX]\s*(\d)+\s*""".toRegex()
     val boardSize = readln().trim()
-    var row = 0
-    var col = 0
+    val row: Int
+    val col:Int
 
     if (regex.matches(boardSize)){
         row = boardSize.substring(0,1).toInt()
@@ -234,10 +241,8 @@ fun getValidDimensions(): Pair<Int, Int> {
 }
 
 fun printBoard(rows: Int, cols: Int, board: List<List<Char>>) {
-    // header with numbers
-    println(" " + (1..cols).joinToString(" "))
 
-    // columns
+    println(" " + (1..cols).joinToString(" ")) //spaced row number header
     repeat (rows) { row ->
         print("║")
         repeat (cols) {col ->
@@ -246,8 +251,7 @@ fun printBoard(rows: Int, cols: Int, board: List<List<Char>>) {
         println()
     }
 
-    val bottomRow = CharArray(cols) { '═' }.joinToString("╩")
-    println("╚$bottomRow╝")
+    println("╚${CharArray(cols) { '═' }.joinToString("╩")}╝")
 }
 
 fun toggleActivePlayer(player: String, firstPlayer: String, secondPlayer: String): Pair<String, Char> {
